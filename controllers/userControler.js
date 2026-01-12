@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { signinSchema, signupSchema } from "../validation/validation.js";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
+import { success } from "zod";
 
 //Route for user login
 const loginUser = async (req, res) => {
@@ -20,7 +21,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    //In variable store
+    //in variable store
     const { email, password } = parsedData.data;
 
     const user = await userModel.findOne({
@@ -52,12 +53,11 @@ const loginUser = async (req, res) => {
     //Store token in cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: false,     // localhost = HTTP
+      sameSite: "lax",   // REQUIRED for cross-port
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
-    //Send response
     return res.status(200).json({
       success: true,
       message: "Login successful",
@@ -78,10 +78,7 @@ const registerUser = async (req, res) => {
     if (!validateData.success) {
       return res.status(400).json({
         success: false,
-        errors: validateData.error.errors.map((err) => ({
-          field: err.path.join("."),
-          message: err.message,
-        })),
+        message: validateData.error.errors[0].message,
       });
     }
 
@@ -117,6 +114,31 @@ const registerUser = async (req, res) => {
   }
 };
 
-const adminLogin = async (req, res) => {};
+const adminLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = jwt.sign(email + password, process.env.JWT_ADMIN_SECRET);
+      res.status(200).json({
+        success: true,
+        token,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
 
 export { loginUser, registerUser, adminLogin };
