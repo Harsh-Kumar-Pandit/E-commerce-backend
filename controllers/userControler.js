@@ -50,13 +50,13 @@ const loginUser = async (req, res) => {
       expiresIn: "1d",
     });
 
-    //Store token in cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,     // localhost = HTTP
-      sameSite: "lax",   // REQUIRED for cross-port
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
     });
+
 
     return res.status(200).json({
       success: true,
