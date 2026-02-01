@@ -46,9 +46,10 @@ const loginUser = async (req, res) => {
     }
 
     //token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_USER_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_USER_SECRET,
+      { expiresIn: "7d" 
+}
+    );
 
     
     return res.status(200).json({
@@ -57,11 +58,6 @@ const loginUser = async (req, res) => {
       token,
     });
 
-
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -141,4 +137,14 @@ const adminLogin = async (req, res) => {
   }
 };
 
-export { loginUser, registerUser, adminLogin };
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).select("name email");
+    res.json({ success: true, user });
+  } catch (error) {
+    res.json({ success: false });
+  }
+};
+
+
+export { loginUser, registerUser, adminLogin, getUserProfile };
