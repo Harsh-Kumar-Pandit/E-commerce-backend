@@ -7,7 +7,7 @@ import userRouter from './routes/userRoute.js';
 import cookieParser from "cookie-parser";
 import productRouter from './routes/productRoute.js';
 import cartRouter from './routes/cartRoute.js';
-import orderRouter from './routes/orderroute.js';
+import orderRouter from './routes/orderRouter.js';
 import router from './routes/adminRoutes.js';
 
 
