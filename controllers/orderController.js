@@ -97,7 +97,7 @@ const placeOrderStripe = async (req, res) => {
 
 }
 
-const verifySripe = async (req, res) => {
+const verifyStripe = async (req, res) => {
   const { orderId, success } = req.body;
   const userId = req.user.id; 
 
