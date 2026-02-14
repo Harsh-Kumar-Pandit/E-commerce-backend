@@ -10,7 +10,10 @@ import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import router from './routes/adminRoutes.js';
 
-
+import fs from 'fs'
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads', { recursive: true })
+}
 
 //App Config
 const app = express()
