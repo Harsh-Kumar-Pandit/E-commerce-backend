@@ -26,7 +26,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:5174",
       "https://e-commerce-frontend-five-khaki.vercel.app",
-      "https://ecommerce-admin-sable-two.vercel.app/"
+      "https://ecommerce-admin-sable-two.vercel.app"
     ], 
     credentials: true
   })
