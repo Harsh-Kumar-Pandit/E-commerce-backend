@@ -3,6 +3,9 @@
 <div align="center">
 
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Harsh-Kumar-Pandit/E-commerce-backend)
+[![Live API](https://img.shields.io/badge/API-Live_on_Render-00b36b?style=for-the-badge&logo=render&logoColor=white)](https://e-commerce-backend-76n4.onrender.com)
+[![Admin Panel](https://img.shields.io/badge/Admin_Panel-Live-8b5cf6?style=for-the-badge&logo=vercel&logoColor=white)](https://ecommerce-admin-sable-two.vercel.app/admin/dashboard)
+[![Frontend](https://img.shields.io/badge/Frontend-Live-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://e-commerce-frontend-five-khaki.vercel.app)
 [![Node.js](https://img.shields.io/badge/Node.js-18-68a063?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express.js-4-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-4db33d?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
@@ -11,9 +14,20 @@
 
 **Production-grade REST API for the Aurex e-commerce platform — powering user auth, product management, order processing, and Stripe payment integration with 99.9% transaction reliability.**
 
-[Frontend Repo →](https://github.com/Harsh-Kumar-Pandit/E-commerce-frontend) · [Live Demo →](https://e-commerce-frontend-five-khaki.vercel.app/) · [Report Bug](https://github.com/Harsh-Kumar-Pandit/E-commerce-backend/issues)
-
 </div>
+
+---
+
+## 🌐 Live Deployments
+
+| | URL | Platform |
+|--|-----|----------|
+| **🖥️ Backend API** | https://e-commerce-backend-76n4.onrender.com | Render |
+| **🎨 Frontend Store** | https://e-commerce-frontend-five-khaki.vercel.app | Vercel |
+| **🔧 Admin Panel** | https://ecommerce-admin-sable-two.vercel.app/admin/dashboard | Vercel |
+| **✅ Health Check** | https://e-commerce-backend-76n4.onrender.com/ | — |
+
+> **Note:** Backend is hosted on Render free tier — the server may take **~30 seconds to wake up** on the first request after inactivity. Subsequent requests are fast.
 
 ---
 
@@ -36,6 +50,7 @@
 - **Product Management** — full CRUD with image uploads via Cloudinary
 - **Cart & Order System** — cart management, order creation, and status tracking
 - **Stripe Payment Integration** — secure multi-currency checkout
+- **Admin Dashboard** — real-time inventory, order, and user management
 - **Cloudinary CDN** — automated image optimization and fast media delivery
 - **Input Validation** — dedicated validation layer for all incoming requests
 - **MongoDB Optimization** — indexing and aggregation pipelines for 38% faster queries
@@ -100,6 +115,8 @@ E-commerce-backend/
 
 ## 🔌 API Endpoints
 
+**Base URL:** `https://e-commerce-backend-76n4.onrender.com`
+
 ### 👤 User — `/api/user`
 
 | Method | Endpoint | Access | Description |
@@ -142,7 +159,7 @@ E-commerce-backend/
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Getting Started Locally
 
 ### Prerequisites
 - Node.js v16+
@@ -167,8 +184,6 @@ cp .env.example .env
 ```
 
 ### Environment Variables
-
-Create a `.env` file in the root:
 
 ```env
 # Server
@@ -230,7 +245,7 @@ adminAuth middleware checks role === "admin" for admin routes
 | Role | Permissions |
 |------|------------|
 | `user` | Own cart, own orders, own profile |
-| `admin` | All users, all orders, product management, inventory |
+| `admin` | All users, all orders, product management, admin dashboard |
 
 ---
 
@@ -288,6 +303,18 @@ adminAuth middleware checks role === "admin" for admin routes
 
 ---
 
+## 🚢 Deploying to Render
+
+1. Push your code to GitHub
+2. Go to [render.com](https://render.com) → **New Web Service**
+3. Connect your GitHub repository
+4. Set build command: `npm install`
+5. Set start command: `npm start`
+6. Add all environment variables in the Render dashboard
+7. Deploy ✅
+
+---
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -304,7 +331,7 @@ adminAuth middleware checks role === "admin" for admin routes
 
 - GitHub: [@Harsh-Kumar-Pandit](https://github.com/Harsh-Kumar-Pandit)
 - Email: harshkumarpandit2004@gmail.com
-- Frontend Repo: [E-commerce-frontend](https://github.com/Harsh-Kumar-Pandit/E-commerce-frontend)
+- Frontend: [E-commerce-frontend](https://github.com/Harsh-Kumar-Pandit/E-commerce-frontend)
 
 ---
 
