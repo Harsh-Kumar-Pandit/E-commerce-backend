@@ -1,346 +1,107 @@
-# ⚡ Aurex — E-Commerce Backend API
+# Aurex — Backend API
 
-<div align="center">
+> Case study: the REST API powering a 3-service e-commerce platform — auth, catalog, cart, orders, and payments for 2,500+ concurrent users.
 
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/Harsh-Kumar-Pandit/E-commerce-backend)
-[![Live API](https://img.shields.io/badge/API-Live_on_Render-00b36b?style=for-the-badge&logo=render&logoColor=white)](https://e-commerce-backend-76n4.onrender.com)
-[![Admin Panel](https://img.shields.io/badge/Admin_Panel-Live-8b5cf6?style=for-the-badge&logo=vercel&logoColor=white)](https://ecommerce-admin-sable-two.vercel.app/admin/dashboard)
-[![Frontend](https://img.shields.io/badge/Frontend-Live-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://e-commerce-frontend-five-khaki.vercel.app)
-[![Node.js](https://img.shields.io/badge/Node.js-18-68a063?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express.js-4-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
-[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-4db33d?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
-[![JWT](https://img.shields.io/badge/Auth-JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=pink)](https://jwt.io/)
-[![Stripe](https://img.shields.io/badge/Payments-Stripe-635bff?style=for-the-badge&logo=stripe&logoColor=white)](https://stripe.com/)
-
-**Production-grade REST API for the Aurex e-commerce platform — powering user auth, product management, order processing, and Stripe payment integration with 99.9% transaction reliability.**
-
-</div>
+**[Live API →](https://e-commerce-backend-76n4.onrender.com)** · hosted on Render's free tier, so the first request after idle takes ~30s to wake up. Every request after that is fast.
 
 ---
 
-## 🌐 Live Deployments
+## The problem
 
-| | URL | Platform |
-|--|-----|----------|
-| **🖥️ Backend API** | https://e-commerce-backend-76n4.onrender.com | Render |
-| **🎨 Frontend Store** | https://e-commerce-frontend-five-khaki.vercel.app | Vercel |
-| **🔧 Admin Panel** | https://ecommerce-admin-sable-two.vercel.app/admin/dashboard | Vercel |
-| **✅ Health Check** | https://e-commerce-backend-76n4.onrender.com/ | — |
+An e-commerce backend isn't hard because any single endpoint is complex — it's hard because *everything touches money and inventory at once*. A slow product query is annoying. A race condition on stock during checkout is a real bug that loses real trust. This service was built with that asymmetry in mind.
 
-> **Note:** Backend is hosted on Render free tier — the server may take **~30 seconds to wake up** on the first request after inactivity. Subsequent requests are fast.
+## The approach
 
----
+**Index for the queries that actually run.** Product listing and filtering are the highest-traffic reads in any storefront. Targeted MongoDB indexes and aggregation pipelines took API response times down 38% — not by guessing, but by looking at what the frontend actually calls most.
 
-## 📊 Performance Highlights
+**Two-layer auth, not one.** A `auth` middleware checks the JWT is valid; a separate `adminAuth` middleware checks the role. Every admin route runs both — a customer with a stolen-but-valid token still can't touch `/api/order/all`.
 
-| Metric | Result |
-|--------|--------|
-| 👥 Concurrent Users Supported | 2,500+ |
-| 💳 Payment Transaction Reliability | 99.9% |
-| ⚡ API Response Time Reduction | 38% faster via MongoDB indexing |
-| 📦 Stock Management Automation | 50% reduction in manual effort |
-| 🖼️ Media Load Improvement | 1.5s faster via Cloudinary CDN |
+**Payments verified server-side, always.** Stripe checkout sessions are created on the backend, and payment success is *re-verified* by the backend after redirect — never trusted from the client. That's the difference between "payment reliability" being a real number and being a hope.
 
----
-
-## ✨ Features
-
-- **JWT Authentication** — secure login, registration, and protected routes
-- **Role-Based Access Control (RBAC)** — separate permissions for customers and admins
-- **Product Management** — full CRUD with image uploads via Cloudinary
-- **Cart & Order System** — cart management, order creation, and status tracking
-- **Stripe Payment Integration** — secure multi-currency checkout
-- **Admin Dashboard** — real-time inventory, order, and user management
-- **Cloudinary CDN** — automated image optimization and fast media delivery
-- **Input Validation** — dedicated validation layer for all incoming requests
-- **MongoDB Optimization** — indexing and aggregation pipelines for 38% faster queries
-
----
-
-## 🛠️ Tech Stack
-
-| Technology | Purpose |
-|-----------|---------|
-| **Node.js** | JavaScript runtime |
-| **Express.js** | REST API framework |
-| **MongoDB + Mongoose** | Database with schema modeling |
-| **JWT (jsonwebtoken)** | Authentication & authorization tokens |
-| **bcrypt** | Secure password hashing |
-| **Stripe** | Payment processing |
-| **Cloudinary** | Cloud image storage & CDN |
-| **cookie-parser** | Cookie middleware |
-| **cors** | Cross-Origin Resource Sharing |
-| **dotenv** | Environment variable management |
-
----
-
-## 📁 Project Structure
-
-```
-E-commerce-backend/
-├── config/
-│   ├── mongodb.js           # MongoDB Atlas connection
-│   └── cloudinary.js        # Cloudinary configuration
-│
-├── controllers/
-│   ├── userController.js    # Register, login, profile
-│   ├── productController.js # Product CRUD + image upload
-│   ├── cartController.js    # Add, update, remove cart items
-│   └── orderController.js   # Place order, track status, Stripe
-│
-├── middleware/
-│   ├── auth.js              # JWT verification middleware
-│   └── adminAuth.js         # Admin role guard
-│
-├── models/
-│   ├── userModel.js         # User schema (name, email, password, role)
-│   ├── productModel.js      # Product schema (name, price, stock, images)
-│   └── orderModel.js        # Order schema (items, status, payment)
-│
-├── routes/
-│   ├── userRoute.js         # /api/user
-│   ├── productRoute.js      # /api/product
-│   ├── cartRoute.js         # /api/cart
-│   └── orderRoute.js        # /api/order
-│
-├── validation/
-│   └── *.js                 # Request body validation schemas
-│
-├── server.js                # Entry point
-├── package.json
-└── .env.example
-```
-
----
-
-## 🔌 API Endpoints
+## API surface
 
 **Base URL:** `https://e-commerce-backend-76n4.onrender.com`
 
-### 👤 User — `/api/user`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/user/register` | Public | Register new user |
-| POST | `/api/user/login` | Public | Login & receive JWT |
-| GET | `/api/user/profile` | Auth | Get current user profile |
-| PUT | `/api/user/profile` | Auth | Update profile |
-| GET | `/api/user/all` | Admin | Get all users |
-
-### 📦 Product — `/api/product`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| GET | `/api/product/list` | Public | Get all products |
-| GET | `/api/product/:id` | Public | Get single product |
-| POST | `/api/product/add` | Admin | Add new product + images |
-| PUT | `/api/product/:id` | Admin | Update product |
-| DELETE | `/api/product/:id` | Admin | Delete product |
-
-### 🛒 Cart — `/api/cart`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| GET | `/api/cart` | Auth | Get user's cart |
-| POST | `/api/cart/add` | Auth | Add item to cart |
-| PUT | `/api/cart/update` | Auth | Update item quantity |
-| DELETE | `/api/cart/remove` | Auth | Remove item from cart |
-
-### 📋 Order — `/api/order`
-
-| Method | Endpoint | Access | Description |
-|--------|----------|--------|-------------|
-| POST | `/api/order/place` | Auth | Place new order (COD) |
-| GET | `/api/order/list` | Auth | Get user's orders |
-| GET | `/api/order/all` | Admin | Get all orders |
-| PUT | `/api/order/status` | Admin | Update order status |
-| POST | `/api/order/stripe` | Auth | Create Stripe payment session |
-| POST | `/api/order/verify` | Auth | Verify Stripe payment |
-
----
-
-## ⚙️ Getting Started Locally
-
-### Prerequisites
-- Node.js v16+
-- MongoDB Atlas account
-- Stripe account
-- Cloudinary account
-
-### Installation
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/Harsh-Kumar-Pandit/E-commerce-backend.git
-
-# 2. Navigate into the project
-cd E-commerce-backend
-
-# 3. Install dependencies
-npm install
-
-# 4. Set up environment variables
-cp .env.example .env
+```
+/api/user     register · login · profile · admin: list all users
+/api/product  list · get one · admin: add / update / delete
+/api/cart     get · add · update · remove
+/api/order    place (COD) · list · admin: all + status update
+              stripe checkout session · stripe verify
 ```
 
-### Environment Variables
-
-```env
-# Server
-PORT=5000
-NODE_ENV=development
-
-# MongoDB
-MONGO_URL=mongodb+srv://<username>:<password>@cluster.mongodb.net/ecommerce
-
-# JWT
-JWT_SECRET=your_super_secret_jwt_key
-
-# Cloudinary
-CLOUDINARY_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Stripe
-STRIPE_SECRET_KEY=your_stripe_secret_key
-
-# Frontend
-CLIENT_URL=http://localhost:3000
-```
-
-### Run the Server
-
-```bash
-# Development with auto-reload
-npm run dev
-
-# Production
-npm start
-```
-
-Server runs at **http://localhost:5000**
-
----
-
-## 🔐 Authentication Flow
+## Auth flow
 
 ```
 POST /api/user/login
-      ↓
-Validates credentials → bcrypt.compare(password, hash)
-      ↓
-Issues signed JWT token (7 day expiry)
-      ↓
-Client stores token → sends as Authorization: Bearer <token>
-      ↓
-auth middleware verifies token on every protected request
-      ↓
-adminAuth middleware checks role === "admin" for admin routes
+   → bcrypt.compare(password, hash)
+   → sign JWT (7-day expiry)
+Client sends it back as Authorization: Bearer <token>
+   → auth middleware verifies the token, every protected request
+   → adminAuth middleware additionally checks role === "admin"
 ```
 
----
+## Data models (trimmed)
 
-## 🔒 Role-Based Access Control
-
-| Role | Permissions |
-|------|------------|
-| `user` | Own cart, own orders, own profile |
-| `admin` | All users, all orders, product management, admin dashboard |
-
----
-
-## 💳 Stripe Payment Flow
-
-```
-1. POST /api/order/stripe   → creates Stripe checkout session
-2. User completes payment on Stripe hosted page
-3. POST /api/order/verify   → verifies payment success
-4. Order marked as paid in MongoDB ✅
-```
-
----
-
-## 🗄️ Database Models
-
-### User
 ```js
-{
-  name: String,
-  email: String (unique),
-  password: String (bcrypt hashed),
-  role: "user" | "admin",
-  cartData: Object,
-  createdAt: Date
-}
+User    { name, email (unique), password (bcrypt), role, cartData }
+Product { name, description, price, category, stock, images: [Cloudinary URLs] }
+Order   { userId, items: [{productId, qty, price}], amount, address,
+          status: pending|processing|shipped|delivered,
+          paymentMethod: stripe|cod, payment: bool }
 ```
 
-### Product
-```js
-{
-  name: String,
-  description: String,
-  price: Number,
-  category: String,
-  stock: Number,
-  images: [String],   // Cloudinary CDN URLs
-  createdAt: Date
-}
+## Trade-offs I made
+
+| Decision | Why | Cost |
+|---|---|---|
+| MongoDB over a relational DB | Product schemas vary a lot by category; flexible documents fit | Weaker cross-collection integrity than SQL joins/FKs |
+| JWT in headers, not sessions | Stateless, scales horizontally without a session store | Revoking a token before expiry needs extra plumbing |
+| Server-side Stripe verification | Payment truth can't be spoofed from the client | One extra round-trip vs. trusting the client callback |
+
+## Results
+
+| | |
+|---|---|
+| Concurrent users supported | 2,500+ |
+| Stripe transaction reliability | 99.9% |
+| API response time | 38% faster via indexing |
+| Stock management | 50% less manual effort |
+| Media delivery | 1.5s faster via Cloudinary CDN |
+
+## Stack
+
+Node.js · Express · MongoDB + Mongoose · JWT · bcrypt · Stripe · Cloudinary · cors · dotenv — deployed on Render.
+
+## Run it locally
+
+```bash
+git clone https://github.com/Harsh-Kumar-Pandit/E-commerce-backend.git
+cd E-commerce-backend
+npm install
+cp .env.example .env
+npm run dev
 ```
 
-### Order
-```js
-{
-  userId: ObjectId,
-  items: [{ productId, quantity, price }],
-  amount: Number,
-  address: Object,
-  status: "pending" | "processing" | "shipped" | "delivered",
-  paymentMethod: "stripe" | "cod",
-  payment: Boolean,
-  createdAt: Date
-}
+`.env`:
+```env
+PORT=5000
+MONGO_URL=mongodb+srv://<user>:<pass>@cluster.mongodb.net/ecommerce
+JWT_SECRET=your_super_secret_jwt_key
+CLOUDINARY_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+CLIENT_URL=http://localhost:3000
 ```
 
----
+Runs at `localhost:5000`.
 
-## 🚢 Deploying to Render
+## The rest of the platform
 
-1. Push your code to GitHub
-2. Go to [render.com](https://render.com) → **New Web Service**
-3. Connect your GitHub repository
-4. Set build command: `npm install`
-5. Set start command: `npm start`
-6. Add all environment variables in the Render dashboard
-7. Deploy ✅
+- 🎨 [Storefront](https://github.com/Harsh-Kumar-Pandit/E-commerce-frontend) — the customer-facing React app this API serves
+- 🔧 [Admin Panel](https://github.com/Harsh-Kumar-Pandit/Ecommerce-admin) — the other consumer of this API
 
 ---
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your branch: `git checkout -b feature/my-feature`
-3. Commit your changes: `git commit -m 'Add my feature'`
-4. Push: `git push origin feature/my-feature`
-5. Open a Pull Request
-
----
-
-## 👤 Author
-
-**Harsh Kumar Pandit**
-
-- GitHub: [@Harsh-Kumar-Pandit](https://github.com/Harsh-Kumar-Pandit)
-- Email: harshkumarpandit2004@gmail.com
-- Frontend: [E-commerce-frontend](https://github.com/Harsh-Kumar-Pandit/E-commerce-frontend)
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-<div align="center">
-  Made with ❤️ by Harsh Kumar Pandit
-</div>
+**Harsh Kumar Pandit** · [GitHub](https://github.com/Harsh-Kumar-Pandit)
